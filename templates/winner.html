@@ -1,0 +1,23 @@
+{% extends 'base.html' %}
+
+{% block title %} About {% endblock title %}
+
+{% block body %}
+
+<b><p>{{winner}} is the winner</p></b>
+
+
+
+{% if finish == "False" %}
+<a href='/get/{{id}}/bid'>bid</a> 
+<br> 
+{% comment %} <h1> str({{finish}} )</h1> {% endcomment %}
+{% endif %}
+
+<a href='/get/{{id}}/transfer/{{winner}}'> transfer </a>
+
+
+
+{% endblock body %}
+
+

@@ -1,0 +1,22 @@
+
+
+{% extends 'base.html' %}
+
+{% block title %} Profile {% endblock title %}
+
+{% block body %}
+
+<h1>View Profile</h1>
+
+{% if user_info %}
+{% comment %} {% for u in user_info %} {% endcomment %}
+<p> {{user_info.ifsc}} </p>
+<p> {{user_info.account_number}} </p>
+<p> {{user_info.u_id.username}} </p>
+{% comment %} {% endfor %} {% endcomment %}
+
+{% else %}
+<p>No user data</p>
+{% endif %}
+
+{% endblock body %}
