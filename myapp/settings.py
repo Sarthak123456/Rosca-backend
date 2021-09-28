@@ -26,7 +26,7 @@ SECRET_KEY = 'y^5+or*4wy-b=wia_(3i!$m1%#7)0t3dk_=#%*bqsgfa5k2r!s'
 # SECURITY WARNING: don't run with debug turned on in production!
 DEBUG = True
 
-ALLOWED_HOSTS = ['127.0.0.1' , 'thrivefund.herokuapp.com']
+ALLOWED_HOSTS = ['127.0.0.1' ,'therosca.herokuapp.com']
 
 
 # Application definition
@@ -159,11 +159,12 @@ MEDIA_URL = ''
 
 #Added manually
 
-# STATIC_ROOT = os.path.join(BASE_DIR, 'static')
+STATIC_ROOT = os.path.join(BASE_DIR, 'static')
+STATICFILES_STORAGE = 'whitenoise.storage.CompressedManifestStaticFilesStorage'
 
 STATICFILES_DIRS = [
-    os.path.join(BASE_DIR, "static"),
-    '/var/www/static/',
+    # os.path.join(BASE_DIR, "static"),
+    # '/var/www/static/',
 ]
 
 CRISPY_TEMPLATE_PACK = 'bootstrap4'
