@@ -66,9 +66,10 @@ def addGroup(request):
         amt = request.POST.get('amount')
         duration = request.POST.get('duration')
         # user = request.user
+        print('milliseconds = ' , int(milliseconds))
         user = User.objects.get(username=decryptToken(request.POST.get('token')))
         group = group_info_table(name=name, amount=amt, duration=duration, created_by_user=user,
-                                 created_at=milliseconds, updated_at=milliseconds)
+                                 created_at=int(milliseconds), updated_at=int(milliseconds))
         group.save()
         # user = User.objects.get(id=ids)
         groupUuid = group_info_table.objects.get(id=group.id)

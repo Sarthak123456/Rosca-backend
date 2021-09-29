@@ -12,6 +12,7 @@ https://docs.djangoproject.com/en/2.2/ref/settings/
 
 import os
 from django.contrib.messages import constants as messages
+import django_heroku
 
 # Build paths inside the project like this: os.path.join(BASE_DIR, ...)
 BASE_DIR = os.path.dirname(os.path.dirname(os.path.abspath(__file__)))
@@ -24,7 +25,7 @@ BASE_DIR = os.path.dirname(os.path.dirname(os.path.abspath(__file__)))
 SECRET_KEY = 'y^5+or*4wy-b=wia_(3i!$m1%#7)0t3dk_=#%*bqsgfa5k2r!s'
 
 # SECURITY WARNING: don't run with debug turned on in production!
-DEBUG = True
+DEBUG = False
 
 ALLOWED_HOSTS = ['127.0.0.1' ,'therosca.herokuapp.com']
 
@@ -109,10 +110,21 @@ WSGI_APPLICATION = 'myapp.wsgi.application'
 # Database
 # https://docs.djangoproject.com/en/2.2/ref/settings/#databases
 
+# DATABASES = {
+#     'default': {
+#         'ENGINE': 'django.db.backends.sqlite3',
+#         'NAME': os.path.join(BASE_DIR, 'db.sqlite3'),
+#     }
+# }
+
 DATABASES = {
     'default': {
-        'ENGINE': 'django.db.backends.sqlite3',
-        'NAME': os.path.join(BASE_DIR, 'db.sqlite3'),
+        'ENGINE': 'django.db.backends.postgresql_psycopg2',
+        'NAME': 'd5n687ojrd4il1',
+        'USER': 'gaymfzruyfwvgm',
+        'PASSWORD': '26c9281240225b65577da2b54a0696022eabbca1ef5ba68ea0b1c35fddde6de4',
+        'HOST': 'ec2-44-199-26-122.compute-1.amazonaws.com',
+        'PORT': '5432',
     }
 }
 
@@ -176,9 +188,11 @@ CRISPY_TEMPLATE_PACK = 'bootstrap4'
 #SMPT conf
 # EMAIL_BACKEND = 'django.core.mail.backends.console.EmailBackend'
 EMAIL_HOST = 'smtp-relay.sendinblue.com'
-EMAIL_PORT = 587
-EMAIL_HOST_USER = 'sarthak.tuteja@yahoo.com'
+EMAIL_PORT = 465
+EMAIL_HOST_USER = 'sarthak.tuteja91@gmail.com'
 EMAIL_HOST_PASSWORD = '92BfGmx3NLQZHa5A'
-# EMAIL_USE_TLS = True
-# DEFAULT_FROM_EMAIL = 'sarthak.tuteja91@gmail.com'
+EMAIL_USE_SSL = True
+DEFAULT_FROM_EMAIL = 'support@therosca.in'
+
+django_heroku.settings(locals())
 
