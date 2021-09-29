@@ -14,6 +14,11 @@ import os
 from django.contrib.messages import constants as messages
 import django_heroku
 import cloudinary
+import environ
+
+# Initialise environment variables
+env = environ.Env()
+environ.Env.read_env()
 
 # Build paths inside the project like this: os.path.join(BASE_DIR, ...)
 BASE_DIR = os.path.dirname(os.path.dirname(os.path.abspath(__file__)))
@@ -23,7 +28,7 @@ BASE_DIR = os.path.dirname(os.path.dirname(os.path.abspath(__file__)))
 # See https://docs.djangoproject.com/en/2.2/howto/deployment/checklist/
 
 # SECURITY WARNING: keep the secret key used in production secret!
-SECRET_KEY = 'y^5+or*4wy-b=wia_(3i!$m1%#7)0t3dk_=#%*bqsgfa5k2r!s'
+SECRET_KEY = env('SECRET_KEY')
 
 # SECURITY WARNING: don't run with debug turned on in production!
 DEBUG = False
@@ -123,9 +128,9 @@ WSGI_APPLICATION = 'myapp.wsgi.application'
 DATABASES = {
     'default': {
         'ENGINE': 'django.db.backends.postgresql_psycopg2',
-        'NAME': 'd5n687ojrd4il1',
-        'USER': 'gaymfzruyfwvgm',
-        'PASSWORD': '26c9281240225b65577da2b54a0696022eabbca1ef5ba68ea0b1c35fddde6de4',
+        'NAME':  env('DATABASE_NAME'),
+        'USER':  env('DATABASE_USER'),
+        'PASSWORD':  env('DATABASE_PASS'),
         'HOST': 'ec2-44-199-26-122.compute-1.amazonaws.com',
         'PORT': '5432',
     }
@@ -173,15 +178,16 @@ MEDIA_ROOT = os.path.join(BASE_DIR, "")
 MEDIA_URL = ''
 
 #Added manually
-
-
 STATIC_ROOT = os.path.join(BASE_DIR, 'static')
 STATICFILES_STORAGE = 'whitenoise.storage.CompressedManifestStaticFilesStorage'
 
 STATICFILES_DIRS = [
-    # os.path.join(BASE_DIR, "static"),
-    # '/var/www/static/',
+    # os.path.join(BASE_DIR, 'static/')
 ]
+# [
+#     os.path.join(BASE_DIR, "static"),
+#     '/var/www/static/',
+# ]
 
 CRISPY_TEMPLATE_PACK = 'bootstrap4'
 #
@@ -190,28 +196,28 @@ CRISPY_TEMPLATE_PACK = 'bootstrap4'
 # ]
 
 CLOUDINARY_STORAGE = {
-    'CLOUD_NAME': 'hj6tgz5ku',
-    'API_KEY': '932458689549344',
-    'API_SECRET': 'Q6xyphPOp1ktKJqN1tiSeuHcs8Y',
+    'CLOUD_NAME':  env('CLOUD_NAME'),
+    'API_KEY':  env('CLOUD_API_KEY'),
+    'API_SECRET':  env('CLOUD_API_SECRET'),
 }
 
-cloudinary.config(cloud_name='hj6tgz5ku',
-                  api_key='932458689549344',
-                  api_secret='Q6xyphPOp1ktKJqN1tiSeuHcs8Y')
+cloudinary.config(cloud_name=env('CLOUD_NAME'),
+                  api_key=env('CLOUD_API_KEY'),
+                  api_secret=env('CLOUD_API_SECRET'))
 
 
 
-DEFAULT_FILE_STORAGE = 'cloudinary_storage.storage.MediaCloudinaryStorage'
+# DEFAULT_FILE_STORAGE = 'cloudinary_storage.storage.MediaCloudinaryStorage'
 
 #SMPT conf
 # EMAIL_BACKEND = 'django.core.mail.backends.console.EmailBackend'
 EMAIL_HOST = 'smtp-relay.sendinblue.com'
 EMAIL_PORT = 465
 EMAIL_HOST_USER = 'sarthak.tuteja91@gmail.com'
-EMAIL_HOST_PASSWORD = '92BfGmx3NLQZHa5A'
+EMAIL_HOST_PASSWORD = env('EMAIL_HOST_PASSWORD')
 EMAIL_USE_SSL = True
 DEFAULT_FROM_EMAIL = 'support@therosca.in'
 
-django_heroku.settings(locals())
+django_heroku.settings(locals(), staticfiles=False)
 
 
