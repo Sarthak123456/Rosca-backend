@@ -13,6 +13,7 @@ https://docs.djangoproject.com/en/2.2/ref/settings/
 import os
 from django.contrib.messages import constants as messages
 import django_heroku
+import cloudinary
 
 # Build paths inside the project like this: os.path.join(BASE_DIR, ...)
 BASE_DIR = os.path.dirname(os.path.dirname(os.path.abspath(__file__)))
@@ -39,10 +40,12 @@ INSTALLED_APPS = [
     'django.contrib.contenttypes',
     'django.contrib.sessions',
     'django.contrib.messages',
+    'cloudinary_storage',
     'django.contrib.staticfiles',
     'crispy_forms',
     'corsheaders',
-    'django_crontab'
+    'django_crontab',
+    'cloudinary',
 ]
 
 MIDDLEWARE = [
@@ -171,6 +174,7 @@ MEDIA_URL = ''
 
 #Added manually
 
+
 STATIC_ROOT = os.path.join(BASE_DIR, 'static')
 STATICFILES_STORAGE = 'whitenoise.storage.CompressedManifestStaticFilesStorage'
 
@@ -185,6 +189,20 @@ CRISPY_TEMPLATE_PACK = 'bootstrap4'
 #     ('1 0 * * *', 'cron.my_cron_job')
 # ]
 
+CLOUDINARY_STORAGE = {
+    'CLOUD_NAME': 'hj6tgz5ku',
+    'API_KEY': '932458689549344',
+    'API_SECRET': 'Q6xyphPOp1ktKJqN1tiSeuHcs8Y',
+}
+
+cloudinary.config(cloud_name='hj6tgz5ku',
+                  api_key='932458689549344',
+                  api_secret='Q6xyphPOp1ktKJqN1tiSeuHcs8Y')
+
+
+
+DEFAULT_FILE_STORAGE = 'cloudinary_storage.storage.MediaCloudinaryStorage'
+
 #SMPT conf
 # EMAIL_BACKEND = 'django.core.mail.backends.console.EmailBackend'
 EMAIL_HOST = 'smtp-relay.sendinblue.com'
@@ -195,4 +213,5 @@ EMAIL_USE_SSL = True
 DEFAULT_FROM_EMAIL = 'support@therosca.in'
 
 django_heroku.settings(locals())
+
 

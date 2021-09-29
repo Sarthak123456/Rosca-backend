@@ -20,8 +20,7 @@ from django.http import JsonResponse
 from django.contrib.auth.hashers import make_password
 from django.db import IntegrityError
 import jwt
-
-
+import cloudinary.uploader
 from django.core import serializers
 
 
@@ -182,9 +181,6 @@ def signUpUser(request):
             address_line_1 = request.POST.get('address_line_1')
             address_line_2 = request.POST.get('address_line_2')
             password = request.POST.get('password')
-
-            print(password)
-
             user = User(username = username, first_name =first_name, last_name=last_name, email=email)
             user.password = make_password(password)
             user.save()
@@ -215,7 +211,8 @@ def saveBankDetails(request):
         paytm_qr = request.FILES.get("paytm_qr") if request.FILES.get("paytm_qr") else ''
         phonepe_qr = request.FILES.get("phonepe_qr") if request.FILES.get("phonepe_qr") else ''
 
-        print(ifsc , phonepe_qr, branch_address)
+        # print(ifsc , phonepe_qr, branch_address)
+        print(gpay_qr)
 
         user = User.objects.get(username = name)
         # user.password = make_password(password)
@@ -225,10 +222,19 @@ def saveBankDetails(request):
         user_info.account_number = account_number
         user_info.ifsc = ifsc
         user_info.branch_address = branch_address
-        user_info.gpay_qr_code = gpay_qr
-        user_info.phonepe_qr_code = phonepe_qr
-        user_info.paytm_qr_code = paytm_qr
+        if gpay_qr:
+            upload_res = cloudinary.uploader.upload(gpay_qr)
+            user_info.gpay_qr_code = upload_res.get('secure_url')
+
+        if phonepe_qr:
+            upload_res = cloudinary.uploader.upload(phonepe_qr)
+            user_info.phonepe_qr_code = upload_res.get('secure_url')
+
+        if paytm_qr:
+            upload_res = cloudinary.uploader.upload(paytm_qr)
+            user_info.paytm_qr_code = upload_res.get('secure_url')
         user_info.save()
+
 
         return JsonResponse({"message" : "success"})
     return HttpResponse('failed')

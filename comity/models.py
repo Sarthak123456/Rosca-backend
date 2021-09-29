@@ -4,19 +4,10 @@ from django.conf import settings
 from django.contrib.auth.models import User
 from django.db.models.signals import post_save
 from django.dispatch import receiver
+import cloudinary
+from cloudinary.models import CloudinaryField
 
 # Create your models here.
-
-# class Services(models.Model):
-#     name = models.CharField(max_length=122)
-#     email = models.CharField(max_length=122)
-#     phone = models.CharField(max_length=12)
-#     desc = models.TextField()
-#     date = models.DateField()
-#
-#     def __str__(self):
-#         return self.name
-
 class group_info_table(models.Model):
     id = models.UUIDField(primary_key=True, default=uuid.uuid4, editable=False)
     name = models.CharField(max_length=122)
@@ -50,10 +41,10 @@ class UserInfo(models.Model):
     superuser = models.BooleanField(default=False)
     superuser_start_date = models.BigIntegerField(default=0)
     superuser_end_date = models.BigIntegerField(default=0)
-    paytm_qr_code = models.ImageField(blank=True, upload_to='static/img/', default='')
-    phonepe_qr_code = models.ImageField(blank=True, upload_to='static/img/', default='')
-    gpay_qr_code = models.FileField(blank=True, upload_to='static/img/', default='')
-    mobile = models.IntegerField(max_length=20, blank=False, default=0)
+    paytm_qr_code =  models.CharField(blank=True, max_length=230)
+    phonepe_qr_code = models.CharField(blank=True, max_length=230)
+    gpay_qr_code = models.CharField(blank=True, max_length=230)
+    mobile = models.BigIntegerField(max_length=20, blank=False, default=0)
     address_line_1 = models.CharField(max_length=100, blank=True, default='')
     address_line_2 = models.CharField(max_length=100, blank=True, default='')
     order_id = models.CharField(max_length=50, blank=True, default='')
