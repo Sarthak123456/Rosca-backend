@@ -22,6 +22,7 @@ from django.db import IntegrityError
 import jwt
 import cloudinary.uploader
 from django.core import serializers
+import os
 
 
 # from django.core import serializers
@@ -552,8 +553,9 @@ def deactivateSubscription(request):
 
 def createRazorPayOrderId(request):
     if request.method == 'POST':
-        secret_id= 'rzp_live_sioclijuytb3Mp'
-        secret_key = 'jKpz9OPR9taxWTHhWFX3Feyh'
+        secret_id = os.environ.get('RAZORPAY_SECRET_ID')
+        secret_key = os.environ.get('RAZORPAY_SECRET_KEY')
+
 
         client = razorpay.Client(auth=(secret_id, secret_key))
         order_amount = request.POST.get('order_amount')
@@ -561,7 +563,6 @@ def createRazorPayOrderId(request):
         order_receipt = request.POST.get('group_id')
 
         order_id = client.order.create(dict(amount=order_amount, currency=order_currency, receipt=order_receipt))
-        print("order_id = " , order_id.get('id'))
         if order_id:
             user = User.objects.get(username=decryptToken(request.POST.get('token')))
             user_info = UserInfo.objects.get(u_id=user.id)
@@ -577,8 +578,8 @@ def verifyAndSavePayment(request):
     razorpay_order_id = request.POST.get('razorpay_order_id')
     razorpay_signature = request.POST.get('razorpay_signature')
 
-    secret_id = 'rzp_live_sioclijuytb3Mp'
-    secret_key = 'jKpz9OPR9taxWTHhWFX3Feyh'
+    secret_id =os.environ.get('RAZORPAY_SECRET_ID')
+    secret_key =os.environ.get('RAZORPAY_SECRET_KEY')
 
     client = razorpay.Client(auth=(secret_id, secret_key))
 

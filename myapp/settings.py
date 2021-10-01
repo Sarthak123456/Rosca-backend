@@ -23,7 +23,6 @@ environ.Env.read_env()
 # Build paths inside the project like this: os.path.join(BASE_DIR, ...)
 BASE_DIR = os.path.dirname(os.path.dirname(os.path.abspath(__file__)))
 
-
 # Quick-start development settings - unsuitable for production
 # See https://docs.djangoproject.com/en/2.2/howto/deployment/checklist/
 
@@ -31,10 +30,9 @@ BASE_DIR = os.path.dirname(os.path.dirname(os.path.abspath(__file__)))
 SECRET_KEY = env('SECRET_KEY')
 
 # SECURITY WARNING: don't run with debug turned on in production!
-DEBUG = True
+DEBUG = False
 
-ALLOWED_HOSTS = ['127.0.0.1' ,'therosca.herokuapp.com']
-
+ALLOWED_HOSTS = ['127.0.0.1', 'therosca.herokuapp.com']
 
 # Application definition
 
@@ -67,34 +65,12 @@ MIDDLEWARE = [
 
 CORS_ORIGIN_ALLOW_ALL = True
 CORS_ORIGIN_WHITELIST = (
-  'http://localhost:4200',
+    'http://localhost:4200',
 )
 
 CSRF_COOKIE_SECURE = False
 
 ROOT_URLCONF = 'myapp.urls'
-
-# LOGGING = {
-#     'version': 1,
-#     'filters': {
-#         'require_debug_true': {
-#             '()': 'django.utils.log.RequireDebugTrue',
-#         }
-#     },
-#     'handlers': {
-#         'console': {
-#             'level': 'DEBUG',
-#             'filters': ['require_debug_true'],
-#             'class': 'logging.StreamHandler',
-#         }
-#     },
-#     'loggers': {
-#         'django.db.backends': {
-#             'level': 'DEBUG',
-#             'handlers': ['console'],
-#         }
-#     }
-# }
 
 TEMPLATES = [
     {
@@ -114,10 +90,9 @@ TEMPLATES = [
 
 WSGI_APPLICATION = 'myapp.wsgi.application'
 
-
 # Database
 # https://docs.djangoproject.com/en/2.2/ref/settings/#databases
-
+#
 # DATABASES = {
 #     'default': {
 #         'ENGINE': 'django.db.backends.sqlite3',
@@ -155,7 +130,6 @@ AUTH_PASSWORD_VALIDATORS = [
     },
 ]
 
-
 # Internationalization
 # https://docs.djangoproject.com/en/2.2/topics/i18n/
 
@@ -169,7 +143,6 @@ USE_L10N = True
 
 USE_TZ = True
 
-
 # Static files (CSS, JavaScript, Images)
 # https://docs.djangoproject.com/en/2.2/howto/static-files/
 
@@ -177,7 +150,7 @@ STATIC_URL = '/static/'
 MEDIA_ROOT = os.path.join(BASE_DIR, "")
 MEDIA_URL = ''
 
-#Added manually
+# Added manually
 STATIC_ROOT = os.path.join(BASE_DIR, 'static')
 STATICFILES_STORAGE = 'whitenoise.storage.CompressedManifestStaticFilesStorage'
 
@@ -196,20 +169,18 @@ CRISPY_TEMPLATE_PACK = 'bootstrap4'
 # ]
 
 CLOUDINARY_STORAGE = {
-    'CLOUD_NAME':  env('CLOUD_NAME'),
-    'API_KEY':  env('CLOUD_API_KEY'),
-    'API_SECRET':  env('CLOUD_API_SECRET'),
+    'CLOUD_NAME': env('CLOUD_NAME'),
+    'API_KEY': env('CLOUD_API_KEY'),
+    'API_SECRET': env('CLOUD_API_SECRET'),
 }
 
 cloudinary.config(cloud_name=env('CLOUD_NAME'),
                   api_key=env('CLOUD_API_KEY'),
                   api_secret=env('CLOUD_API_SECRET'))
 
-
-
 # DEFAULT_FILE_STORAGE = 'cloudinary_storage.storage.MediaCloudinaryStorage'
 
-#SMPT conf
+# SMPT conf
 # EMAIL_BACKEND = 'django.core.mail.backends.console.EmailBackend'
 EMAIL_HOST = 'smtp-relay.sendinblue.com'
 EMAIL_PORT = 465
@@ -219,5 +190,3 @@ EMAIL_USE_SSL = True
 DEFAULT_FROM_EMAIL = 'support@therosca.in'
 
 django_heroku.settings(locals(), staticfiles=False)
-
-
