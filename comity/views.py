@@ -261,9 +261,9 @@ def getBankDetails(request):
             "account_number" : user_info.account_number,
             "ifsc": user_info.ifsc,
             "branch_address": user_info.branch_address,
-            "gpay_qr_code": user_info.gpay_qr_code.url if user_info.gpay_qr_code else None,
-            "phonepe_qr_code": user_info.phonepe_qr_code.url if user_info.phonepe_qr_code else None,
-            "paytm_qr_code": user_info.paytm_qr_code.url if user_info.paytm_qr_code else None,
+            "gpay_qr_code": user_info.gpay_qr_code if user_info.gpay_qr_code else None,
+            "phonepe_qr_code": user_info.phonepe_qr_code if user_info.phonepe_qr_code else None,
+            "paytm_qr_code": user_info.paytm_qr_code if user_info.paytm_qr_code else None,
 
         }
         # user_info.account_number = account_number
@@ -479,7 +479,6 @@ def getAllGroups(request):
                     }
                 )
 
-
             data.append(
                 {
 
@@ -618,7 +617,7 @@ def sendNotficationToStartComity(request):
     logger = getLogger()
     milliseconds = getCurrentMilis()
     id = request.POST.get('g_id')
-    print("group_id" , id)
+
     allWinners = group_table.objects.filter(g_id=id, winner=True)
     print("allWinners" , allWinners)
 
@@ -812,12 +811,17 @@ def setGroupEndDate(group):
     # print("group duration = " , )
     # getDateAfterSometime(weeks,2)
     dateAfterOneMonth = convertMilisToDatetime(getCurrentMilis()) + relativedelta(months=+1)
+    dateAfterOneDays = convertMilisToDatetime(getCurrentMilis()) + relativedelta(days=+2)
+    milliseconds_since_one_day = dateAfterOneDays.timestamp() * 1000
+
     yr = dateAfterOneMonth.year
     mn = dateAfterOneMonth.month
     dy = dateAfterOneMonth.day
     dt = datetime.datetime(yr, mn, dy)
     print("dateAfterOneMonth milis =", unixTimeMillis(dt))
+    print("milliseconds_since_one_day =",milliseconds_since_one_day)
     group.end_date = unixTimeMillis(dt)
+    group.bid_date = milliseconds_since_one_day
     group.save()
 
 
@@ -834,7 +838,7 @@ def getLogger():
     # create logger
     BASE_DIR = os.path.dirname(os.path.dirname(os.path.abspath(__file__)))
     LOG_FILENAME = os.path.join(BASE_DIR, "mylog.log")
-    logger = logging.getLogger('Thrive')
+    logger = logging.getLogger('Rosca')
     logger.setLevel(logging.INFO)
     if logger.handlers:
         logger.handlers = []
@@ -910,21 +914,21 @@ def bidMoney(request):
     usersInGroup = group_table.objects.filter(g_id=id)
     # user_info = UserInfo.objects.get(u_id=user)
     currentGroup = group_info_table.objects.get(id=id)
-    dateAfterOneDays = convertMilisToDatetime(currentGroup.start_date) + relativedelta(days=+1)
+    # dateAfterOneDays = convertMilisToDatetime(currentGroup.start_date) + relativedelta(days=+1)
 
     # milis = date_to_unix_time_millis(dateAfterOneDays.date())
-    milliseconds_since_one_day = dateAfterOneDays.timestamp() * 1000
-    print("date = " , dateAfterOneDays.date())
-    print("milis = " , milliseconds_since_one_day)
-    currentGroup.bid_date = milliseconds_since_one_day
-    currentGroup.save()
+    # milliseconds_since_one_day = dateAfterOneDays.timestamp() * 1000
+    # print("date = " , dateAfterOneDays.date())
+    # print("milis = " , milliseconds_since_one_day)
+    # currentGroup.bid_date = milliseconds_since_one_day
+    # currentGroup.save()
     highestBidUser = bid.objects.filter(g_id=id, bidAmount__gt=0).order_by('bidAmount').last()
     print("highestBidUser in bid = " , highestBidUser)
 
     showBidInputBox = True
     totalAmount = int(len(usersInGroup)) * int(currentGroup.amount)
     print("getCurrentDateInLocalTimezone().date()" , getCurrentDateInLocalTimezone().date())
-    print("dateAfterOneDays.date()" , dateAfterOneDays.date())
+    # print("dateAfterOneDays.date()" , dateAfterOneDays.date())
     # if (getCurrentDateInLocalTimezone().date() >= dateAfterOneDays.date()):
     # # if(getCurrentDateInLocalTimezone().date() == getCurrentDateInLocalTimezone().date()):
     #     showBidInputBox = False
@@ -964,8 +968,8 @@ def bidMoney(request):
 
             messages.success(request, "{} highestBidUser3 with bid {}".format(highestBidUser, highestBidUser.bidAmount))
 
-        messages.success(request, "Bids open till {} for {}. Please bid!".format(dateAfterOneDays.date(), str(
-            dateAfterOneDays - getCurrentDateInLocalTimezone()).split('.')[0]))
+        # messages.success(request, "Bids open till {} for {}. Please bid!".format(dateAfterOneDays.date(), str(
+        #     dateAfterOneDays - getCurrentDateInLocalTimezone()).split('.')[0]))
         logger.debug('highestBidUser =  %s', highestBidUser)
         return checkBidForm(request, bid_amount, totalAmount, id, nonWinnerUsersInGroup, user)
 
