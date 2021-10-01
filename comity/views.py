@@ -577,8 +577,8 @@ def verifyAndSavePayment(request):
     razorpay_order_id = request.POST.get('razorpay_order_id')
     razorpay_signature = request.POST.get('razorpay_signature')
 
-    secret_id = 'rzp_test_nu9LsvfHJHqHQx'
-    secret_key = 'vqt4RvJIR5NeyWfMAcWcGuPY'
+    secret_id = 'rzp_live_sioclijuytb3Mp'
+    secret_key = 'jKpz9OPR9taxWTHhWFX3Feyh'
 
     client = razorpay.Client(auth=(secret_id, secret_key))
 
