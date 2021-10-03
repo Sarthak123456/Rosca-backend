@@ -808,12 +808,17 @@ def setGroupEndDate(group):
     print("iuhibhkbk", duration.get(group.duration).split(' ')[0])
     print("time = ", getDateAfterSometime(duration.get(group.duration).split(' ')[0],
                                           int(duration.get(group.duration).split(' ')[1])))
-    # duration={"1m" : "month 1" }
-    # print("group duration = " , )
-    # getDateAfterSometime(weeks,2)
+
     dateAfterOneMonth = convertMilisToDatetime(getCurrentMilis()) + relativedelta(months=+1)
-    dateAfterOneDays = convertMilisToDatetime(getCurrentMilis()) + relativedelta(days=+2)
+
+    pub_date = datetime.datetime.today()
+    today = pub_date.replace(hour=23, minute=59)
+    dateAfterOneDays = today + relativedelta(days=+2)
+    print("dateAfterOneDays = ", dateAfterOneDays)
+    print("dateAfterOneMonth = "  , dateAfterOneMonth)
     milliseconds_since_one_day = dateAfterOneDays.timestamp() * 1000
+    print("milliseconds_since_one_day = "  , milliseconds_since_one_day)
+
 
     yr = dateAfterOneMonth.year
     mn = dateAfterOneMonth.month
