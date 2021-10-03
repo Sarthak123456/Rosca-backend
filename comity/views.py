@@ -443,7 +443,7 @@ def getAllGroups(request):
             winner = ''
             usersInGroup = group_table.objects.filter(g_id=id)
             currentGroup = group_info_table.objects.select_related().get(id=id)
-            dateAfterOneDays = convertMilisToDatetime(currentGroup.updated_at) + relativedelta(days=+1)
+            # dateAfterOneDays = convertMilisToDatetime(currentGroup.updated_at) + relativedelta(days=+1)
             totalAmount = int(len(usersInGroup)) * int(currentGroup.amount)
             minBidAmount = totalAmount / 100
             allWinners = group_table.objects.filter(g_id=id, winner=True)
@@ -459,8 +459,8 @@ def getAllGroups(request):
             # print("profile_details = " , profile_details)
             # print("user" , user_id)
             minBidAmountUser = ''
-            user_info = UserInfo.objects.get(u_id=user_id) if UserInfo.objects.filter(
-                u_id=user_id).exists() else None
+            # user_info = UserInfo.objects.get(u_id=user_id) if UserInfo.objects.filter(
+            #     u_id=user_id).exists() else None
             if len(bid.objects.all()) > 0:
                 minBidAmountUser = bid.objects.select_related().filter(g_id=id, bidAmount__gt=0).order_by('bidAmount').last()
 
@@ -501,6 +501,7 @@ def getAllGroups(request):
                     "g_id" : currentGroup.id,
                     "status" : currentGroup.status,
                     "end_date" : convertMilisToDatetime(currentGroup.end_date).date() if currentGroup.end_date else None,
+                    "endDateInMilis" : currentGroup.end_date if currentGroup.end_date else None,
                     "round" : len(allWinners),
                     "winner": winner[0].u_id.username if winner else None
 

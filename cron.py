@@ -35,19 +35,26 @@ def my_cron_job():
             print("Active group: ",  convertMilisToDatetime(group.bid_date))
             id = group.id
             currentGroup = group_info_table.objects.get(id=id)
-            # Getting 2 days after the end_date since at midnight the date changes
-            dateAfterOneDays = convertMilisToDatetime(currentGroup.end_date) + relativedelta(days=+2)
+            # print(convertMilisToDatetime(currentGroup.bid_date).date())
+            # print(getCurrentDateInLocalTimezone().date())
+            # Getting 1 days after the bid_date since at midnight the date changes
+            # dateAfterOneDays = convertMilisToDatetime(currentGroup.end_date) + relativedelta(days=+1)
+            dateAfterOneDayOfBidding = convertMilisToDatetime(currentGroup.bid_date) + relativedelta(days=+1)
+            print("dateAfterOneDayOfBidding = ", dateAfterOneDayOfBidding.date())
             allWinners = group_table.objects.filter(g_id=id, winner=True)
 
 
             # -------------- Bid money logic -------------------
-            if (getCurrentDateInLocalTimezone().date() == convertMilisToDatetime(currentGroup.bid_date)):
+            if (getCurrentDateInLocalTimezone().date() == dateAfterOneDayOfBidding.date()):
+                print(convertMilisToDatetime(currentGroup.bid_date).date())
+                print(getCurrentDateInLocalTimezone().date())
+
                 # # dateAfterOneDays = convertMilisToDatetime(currentGroup.start_date) + relativedelta(days=+3)
                 highestBidUser = bid.objects.filter(g_id=id, bidAmount__gt=0).order_by('bidAmount').last()
                 if highestBidUser:
                     round = len(allWinners)
                     lastWinner = group_table.objects.get(g_id=id, winner=True, round=int(round))
-                    print('lastWinner in  bid =  %s', lastWinner)
+                    print('lastWinner in  bid =  ', lastWinner)
 
                     if lastWinner and highestBidUser != lastWinner:
                         lastWinner.winner = False
@@ -55,10 +62,10 @@ def my_cron_job():
                         lastWinner.save()
                     user = User.objects.get(username=highestBidUser)
                     highestBidWinner = group_table.objects.get(g_id=id, u_id=user)
-                    print('highestBidWinner in  bid =  %s', highestBidWinner.u_id.username)
+                    print('highestBidWinner in  bid =  ', highestBidWinner.u_id.username)
 
                     if highestBidWinner:
-                        print('highestBidWinner =  %s', highestBidWinner)
+                        print('highestBidWinner =  ', highestBidWinner)
                         highestBidWinner.winner = True
                         highestBidWinner.bidAmount = highestBidUser.bidAmount
                         highestBidWinner.save()
@@ -66,6 +73,7 @@ def my_cron_job():
                         highestBidWinner.save()
 
                 # When bidding ends for a round, set bid date to a day after group end_date
+                dateAfterOneDays = convertMilisToDatetime(currentGroup.end_date) + relativedelta(days=+1)
                 currentGroup.bid_date = dateAfterOneDays.timestamp() * 1000
                 currentGroup.final_bid_time = getCurrentDateInLocalTimezone().date()
                 currentGroup.save()
@@ -76,7 +84,7 @@ def my_cron_job():
 
             if (getCurrentDateInLocalTimezone().date() == convertMilisToDatetime(group.end_date).date()):
             # if (getCurrentDateInLocalTimezone().date() == convertMilisToDatetime(currentGroup.bid_date)):
-                print("allWinners = %s", allWinners)
+                print("allWinners = ", allWinners)
                 # bid.objects.filter(g_id=id).delete()
                 winner = bid.objects.select_related().filter(g_id=id, bidAmount__gt=0).order_by('bidAmount').last()
 
@@ -93,9 +101,9 @@ def my_cron_job():
                 }
                 print("end date winner", data)
 
-                print("Logic when group ends %s", winner)
+                print("Logic when group ends ", winner)
                 setGroupEndDate(group)
-
+#    --------------------------- When group ends -----------------------------
             if (len(allWinners) == len(group_table.objects.filter(g_id=id))):
 
                 if (getCurrentDateInLocalTimezone().date() >= convertMilisToDatetime(group.end_date).date()):

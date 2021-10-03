@@ -25,7 +25,7 @@ class group_info_table(models.Model):
         null=True,
      )
     def __str__(self):
-        return str(self.id)
+        return str(self.name)
 
 
 class UserInfo(models.Model):
