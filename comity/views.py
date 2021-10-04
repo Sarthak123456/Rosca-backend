@@ -816,17 +816,16 @@ def setGroupEndDate(group):
     today = pub_date.replace(hour=23, minute=59)
     dateAfterOneDays = today + relativedelta(days=+2)
     print("dateAfterOneDays = ", dateAfterOneDays)
-    print("dateAfterOneMonth = "  , dateAfterOneMonth)
+    # print("dateAfterOneMonth = "  , dateAfterOneMonth)
     milliseconds_since_one_day = dateAfterOneDays.timestamp() * 1000
-    print("milliseconds_since_one_day = "  , milliseconds_since_one_day)
-
+    print("milliseconds_since_one_day = ", milliseconds_since_one_day)
 
     yr = dateAfterOneMonth.year
     mn = dateAfterOneMonth.month
     dy = dateAfterOneMonth.day
     dt = datetime.datetime(yr, mn, dy)
     print("dateAfterOneMonth milis =", unixTimeMillis(dt))
-    print("milliseconds_since_one_day =",milliseconds_since_one_day)
+    # print("milliseconds_since_one_day =",milliseconds_since_one_day)
     group.end_date = unixTimeMillis(dt)
     group.bid_date = milliseconds_since_one_day
     group.save()
@@ -922,6 +921,16 @@ def bidMoney(request):
     # user_info = UserInfo.objects.get(u_id=user)
     currentGroup = group_info_table.objects.get(id=id)
     # dateAfterOneDays = convertMilisToDatetime(currentGroup.start_date) + relativedelta(days=+1)
+
+
+    # pub_date = datetime.datetime.today()
+    # today = pub_date.replace(hour=23, minute=59)
+    # dateAfterOneDays = today + relativedelta(days=+2)
+    # print("dateAfterOneDays = ", dateAfterOneDays)
+    # # print("dateAfterOneMonth = "  , dateAfterOneMonth)
+    # milliseconds_since_one_day = dateAfterOneDays.timestamp() * 1000
+    # print("milliseconds_since_one_day = "  , milliseconds_since_one_day)
+
 
     # milis = date_to_unix_time_millis(dateAfterOneDays.date())
     # milliseconds_since_one_day = dateAfterOneDays.timestamp() * 1000

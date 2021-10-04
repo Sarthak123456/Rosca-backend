@@ -5,7 +5,7 @@ django.setup()
 
 from django.http import request
 from comity.models import *
-import datetime
+from  datetime import *
 from random import randint
 import pytz
 from dateutil.relativedelta import relativedelta
@@ -18,7 +18,7 @@ def my_cron_job():
         user_info = UserInfo.objects.get(u_id = user.id) if UserInfo.objects.filter(u_id = user.id).exists() else None
         # -------------- Deactivate Subscription -------------------
         if user_info:
-            if (getCurrentDateInLocalTimezone().date() == convertMilisToDatetime(user_info.superuser_end_date)):
+            if (getCurrentDateInLocalTimezone().date() == convertMilisToDatetime(user_info.superuser_end_date).date()):
                 print("Deactivating subscription for user =" , user.username)
             # deactivateSubscription(user.username)
 
@@ -190,12 +190,23 @@ def setGroupEndDate(group):
     # print("group duration = " , )
     # getDateAfterSometime(weeks,2)
     dateAfterOneMonth = convertMilisToDatetime(getCurrentMilis()) + relativedelta(months=+1)
+
+    pub_date = datetime.datetime.today()
+    today = pub_date.replace(hour=23, minute=59)
+    dateAfterOneDays = today + relativedelta(days=+2)
+    print("dateAfterOneDays = ", dateAfterOneDays)
+    # print("dateAfterOneMonth = "  , dateAfterOneMonth)
+    milliseconds_since_one_day = dateAfterOneDays.timestamp() * 1000
+    print("milliseconds_since_one_day = ", milliseconds_since_one_day)
+
+
     yr = dateAfterOneMonth.year
     mn = dateAfterOneMonth.month
     dy = dateAfterOneMonth.day
     dt = datetime.datetime(yr, mn, dy)
     print("dateAfterOneMonth milis =", unixTimeMillis(dt))
     group.end_date = unixTimeMillis(dt)
+    group.bid_date = milliseconds_since_one_day
     group.save()
 
 
