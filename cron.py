@@ -5,7 +5,7 @@ django.setup()
 
 from django.http import request
 from comity.models import *
-from  datetime import *
+import datetime
 from random import randint
 import pytz
 from dateutil.relativedelta import relativedelta
@@ -17,7 +17,7 @@ def my_cron_job():
         print('collecting user details for ' + user.username)
         user_info = UserInfo.objects.get(u_id = user.id) if UserInfo.objects.filter(u_id = user.id).exists() else None
         # -------------- Deactivate Subscription -------------------
-        if user_info:
+        if user_info and user_info.superuser_end_date:
             if (getCurrentDateInLocalTimezone().date() == convertMilisToDatetime(user_info.superuser_end_date).date()):
                 print("Deactivating subscription for user =" , user.username)
             # deactivateSubscription(user.username)
@@ -32,7 +32,7 @@ def my_cron_job():
 
     for group in groups:
         if group.status == 'active':
-            print("Active group: ",  convertMilisToDatetime(group.bid_date))
+            print("Active group: ",  convertMilisToDatetime(group.bid_date).date())
             id = group.id
             currentGroup = group_info_table.objects.get(id=id)
             # print(convertMilisToDatetime(currentGroup.bid_date).date())
@@ -40,7 +40,7 @@ def my_cron_job():
             # Getting 1 days after the bid_date since at midnight the date changes
             # dateAfterOneDays = convertMilisToDatetime(currentGroup.end_date) + relativedelta(days=+1)
             dateAfterOneDayOfBidding = convertMilisToDatetime(currentGroup.bid_date) + relativedelta(days=+1)
-            print("dateAfterOneDayOfBidding = ", dateAfterOneDayOfBidding.date())
+            # print("dateAfterOneDayOfBidding = ", dateAfterOneDayOfBidding.date())
             allWinners = group_table.objects.filter(g_id=id, winner=True)
 
 
@@ -73,11 +73,11 @@ def my_cron_job():
                         highestBidWinner.save()
 
                 # When bidding ends for a round, set bid date to a day after group end_date
-                dateAfterOneDays = convertMilisToDatetime(currentGroup.end_date) + relativedelta(days=+1)
-                currentGroup.bid_date = dateAfterOneDays.timestamp() * 1000
-                currentGroup.final_bid_time = getCurrentDateInLocalTimezone().date()
-                currentGroup.save()
-                print("updated currentGroup.bid_date")
+                # dateAfterOneDays = convertMilisToDatetime(currentGroup.end_date) + relativedelta(days=+1)
+                # currentGroup.bid_date = dateAfterOneDays.timestamp() * 1000
+                # currentGroup.final_bid_time = getCurrentMilis()
+                # currentGroup.save()
+                # print("updated currentGroup.bid_date " , currentGroup.final_bid_time)
 
 
                     # ----------------- sendNotficationToStartComity ---------------------------
@@ -151,7 +151,6 @@ def startGroup(request, winner, id, finish):
             return winner
 
 def deactivateSubscription(username):
-    username = username
     user = User.objects.get(username=username)
     user_info = UserInfo.objects.get(u_id=user.id) if UserInfo.objects.filter(
         u_id=user.id).exists() else None
@@ -192,19 +191,19 @@ def setGroupEndDate(group):
     dateAfterOneMonth = convertMilisToDatetime(getCurrentMilis()) + relativedelta(months=+1)
 
     pub_date = datetime.datetime.today()
-    today = pub_date.replace(hour=23, minute=59)
+    today = pub_date.replace(hour=18, minute=29)
     dateAfterOneDays = today + relativedelta(days=+2)
-    print("dateAfterOneDays = ", dateAfterOneDays)
+    # print("dateAfterOneDays = ", dateAfterOneDays)
     # print("dateAfterOneMonth = "  , dateAfterOneMonth)
     milliseconds_since_one_day = dateAfterOneDays.timestamp() * 1000
-    print("milliseconds_since_one_day = ", milliseconds_since_one_day)
+    # print("milliseconds_since_one_day = ", milliseconds_since_one_day)
 
 
     yr = dateAfterOneMonth.year
     mn = dateAfterOneMonth.month
     dy = dateAfterOneMonth.day
     dt = datetime.datetime(yr, mn, dy)
-    print("dateAfterOneMonth milis =", unixTimeMillis(dt))
+    # print("dateAfterOneMonth milis =", unixTimeMillis(dt))
     group.end_date = unixTimeMillis(dt)
     group.bid_date = milliseconds_since_one_day
     group.save()

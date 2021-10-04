@@ -485,14 +485,14 @@ def getAllGroups(request):
 
                     "minBidAmountUser": minBidAmountUser.u_id.username if minBidAmountUser else None,
                     "bid_amount": minBidAmountUser.bidAmount if minBidAmountUser else None,
-                    "updated_date": convertMilisToDatetime(minBidAmountUser.g_id.updated_at).date() if minBidAmountUser else None,
+                    "updated_date": convertMilisToDatetime(minBidAmountUser.g_id.updated_at).date()  if minBidAmountUser else None,
                     "updated_time": convertMilisToDatetime(minBidAmountUser.g_id.updated_at).time() if minBidAmountUser else None,
                     "totalAmount": totalAmount,
                     "usersInGroup": users,
                     "minBidAmount": minBidAmount,
                     # "dateAfterOneDays_date": convertMilisToDatetime(currentGroup.bid_date).date() if currentGroup.bid_date else None,
                     # "dateAfterOneDays_time": dateAfterOneDays.time(),
-                    "bidEndDate": convertMilisToDatetime(currentGroup.bid_date).date() if currentGroup.bid_date else None,
+                    "bidEndDate": convertMilisToDatetime(currentGroup.bid_date).ctime() if currentGroup.bid_date else None,
                     "bidEndDateInMilis": currentGroup.bid_date if currentGroup.bid_date else None,
                     "admin" : currentGroup.created_by_user.username,
                     "name" : currentGroup.name,
@@ -813,7 +813,7 @@ def setGroupEndDate(group):
     dateAfterOneMonth = convertMilisToDatetime(getCurrentMilis()) + relativedelta(months=+1)
 
     pub_date = datetime.datetime.today()
-    today = pub_date.replace(hour=23, minute=59)
+    today = pub_date.replace(hour=18, minute=29)
     dateAfterOneDays = today + relativedelta(days=+2)
     print("dateAfterOneDays = ", dateAfterOneDays)
     # print("dateAfterOneMonth = "  , dateAfterOneMonth)
@@ -924,8 +924,9 @@ def bidMoney(request):
 
 
     # pub_date = datetime.datetime.today()
-    # today = pub_date.replace(hour=23, minute=59)
-    # dateAfterOneDays = today + relativedelta(days=+2)
+    # today = pub_date.replace(hour=18, minute=29)
+    # dateAfterOneDays = today
+    #                    # + relativedelta(days=+2)
     # print("dateAfterOneDays = ", dateAfterOneDays)
     # # print("dateAfterOneMonth = "  , dateAfterOneMonth)
     # milliseconds_since_one_day = dateAfterOneDays.timestamp() * 1000
@@ -1134,6 +1135,7 @@ def viewProfile(request):
 def convertMilisToDatetime(milis):
     if milis:
         s = milis / 1000
+        print( datetime.datetime.fromtimestamp(s, pytz.timezone('Asia/Kolkata')))
         return datetime.datetime.fromtimestamp(s, pytz.timezone('Asia/Kolkata'))
 
 
