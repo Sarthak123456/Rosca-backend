@@ -503,7 +503,10 @@ def getAllGroups(request):
                     "end_date" : convertMilisToDatetime(currentGroup.end_date).date() if currentGroup.end_date else None,
                     "endDateInMilis" : currentGroup.end_date if currentGroup.end_date else None,
                     "round" : len(allWinners),
-                    "winner": winner[0].u_id.username if winner else None
+                    "winner": winner[0].u_id.username if winner else None,
+                    "tranfer_to_winner" : int(currentGroup.amount) - (int(minBidAmountUser.bidAmount) / (int(len(users)) - len(allWinners))) if minBidAmountUser else currentGroup.amount,
+                    # "time_left" : str(convertMilisToDatetime(currentGroup.bid_date) - getCurrentDateInLocalTimezone()).split('.')[0] if currentGroup.bid_date else None
+
 
                 }
             )
@@ -900,9 +903,7 @@ def getRandom(id, request, logger):
         i = randint(0, (count - 1))
         return usersInGroup[i]
     else:
-        messages.success(request, "Commitee finished")
-        return redirect('/get/{}'.format(id))
-
+        messages.success(request, "ROSCA finished")
 
 def bidMoney(request):
     # bidAmount = 0
