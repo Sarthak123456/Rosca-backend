@@ -182,7 +182,6 @@ def signUpUser(request):
             address_line_1 = request.POST.get('address_line_1')
             address_line_2 = request.POST.get('address_line_2')
             password = request.POST.get('password')
-            print("email = " , email)
             redundant_username = User.objects.get(email=email) if User.objects.filter(email=email).exists() else None
             if redundant_username:
                 return JsonResponse({"message": f'Email {email} already exists!'})
