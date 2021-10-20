@@ -14,6 +14,7 @@ class group_info_table(models.Model):
     amount = models.CharField(max_length=6)
     duration = models.CharField(max_length=6, default='1m')
     created_at=models.BigIntegerField(default=0)
+    User._meta.get_field('email')._unique = True
     updated_at=models.BigIntegerField(default=0)
     start_date=models.BigIntegerField(default=0)
     end_date=models.BigIntegerField(default=0)

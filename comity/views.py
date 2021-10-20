@@ -182,7 +182,17 @@ def signUpUser(request):
             address_line_1 = request.POST.get('address_line_1')
             address_line_2 = request.POST.get('address_line_2')
             password = request.POST.get('password')
-            user = User(username = username, first_name =first_name, last_name=last_name, email=email)
+            print("email = " , email)
+            redundant_username = User.objects.get(email=email) if User.objects.filter(email=email).exists() else None
+            if redundant_username:
+                return JsonResponse({"message": f'Email {email} already exists!'})
+            else:
+                pass
+            redundant_number = UserInfo.objects.get(mobile=mobile) if UserInfo.objects.filter(mobile=mobile).exists() else None
+            if redundant_number:
+                return JsonResponse({"message": f'Mobile number {mobile} already exists!'})
+                # raise IntegrityError('Email already exists')
+            user = User(username= username.lower(), first_name =first_name, last_name=last_name, email=email)
             user.password = make_password(password)
             user.save()
             user_info = UserInfo(u_id = user, mobile=mobile, address_line_1 = address_line_1, address_line_2 = address_line_2)
