@@ -144,7 +144,7 @@ def loginUser(request):
     if request.method == "POST":
         username = request.POST.get("email")
         password = request.POST.get("password")
-        user = authenticate(username=username, password=password)
+        user = authenticate(username=username.lower(), password=password)
 
         if user is not None:
             login(request, user)
@@ -156,10 +156,6 @@ def loginUser(request):
 
 def returnToken(username):
     encoded_jwt = jwt.encode({"username": username}, "secret", algorithm="HS256")
-    # key = "FLqz4-FWMT4M_0dihy5vqvG8rwvS6F7QQxFhI6lW1CU="
-    # f = Fernet(key)
-    # username = str(username)
-    # encrypted_data = f.encrypt(str.encode(f'{username}'))
     return encoded_jwt
 
 def decryptToken(encoded_jwt):
