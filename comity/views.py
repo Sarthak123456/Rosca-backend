@@ -457,7 +457,7 @@ def getAllGroups(request):
                 print('winner = ' , winner[0])
                 # data.append({"winner": winner[0].u_id.username})
                 # print('round = ' , len(allWinners))
-            user_id = currentGroup.created_by_user.id
+            # user_id = currentGroup.created_by_user.id
             # user_details = User.objects.get(id = user_id)
             # profile_details = Profile.objects.all()
             # print("user_details = " , user_details)
@@ -473,6 +473,8 @@ def getAllGroups(request):
             for user in usersInGroup:
                 user_info = UserInfo.objects.get(u_id=user.u_id.id) if UserInfo.objects.filter(
                     u_id=user.u_id.id).exists() else None
+
+                # currentwinner = group_table.objects.get(u_id = User.objects.get(username = user), g_id=id)
                 users.append({
                     "username" : user.u_id.username,
                     "id" : user.u_id.id,
@@ -482,6 +484,7 @@ def getAllGroups(request):
                     "account_number" : user_info.account_number if user_info else None,
                     "ifsc" : user_info.ifsc if user_info else None,
                     "superuser": user_info.superuser if user_info else None,
+                    # 'winner' : currentwinner.winner
                     }
                 )
 
@@ -509,7 +512,7 @@ def getAllGroups(request):
                     "endDateInMilis" : currentGroup.end_date if currentGroup.end_date else None,
                     "round" : len(allWinners),
                     "winner": winner[0].u_id.username if winner else None,
-                    "tranfer_to_winner" : int(currentGroup.amount) - (int(minBidAmountUser.bidAmount) / (int(len(users)) - len(allWinners))) if minBidAmountUser else currentGroup.amount,
+                    "tranfer_to_winner" : int(currentGroup.amount) - (int(minBidAmountUser.bidAmount) / int(len(users))) if minBidAmountUser else currentGroup.amount,
                     # "time_left" : str(convertMilisToDatetime(currentGroup.bid_date) - getCurrentDateInLocalTimezone()).split('.')[0] if currentGroup.bid_date else None
 
 
@@ -530,7 +533,8 @@ def deleteAllGroups(request):
 def activateSubscription(request):
     logger = getLogger()
     if request.method == 'POST':
-        username = decryptToken(request.POST.get('token'))
+        # username = decryptToken(request.POST.get('token'))
+        username = request.POST.get('username')
         user = User.objects.get(username=username)
         logger.info("Activating subscription for user = " + user.username)
         user_info = UserInfo.objects.get(u_id=user.id) if UserInfo.objects.filter(
@@ -719,10 +723,7 @@ def sendNotficationToStartComity(request):
 
     # Logic for 2nd to n-1 rounds
     elif (len(allWinners) != len(group_table.objects.filter(g_id=group))):
-        count = 0
         logger.info("Getting winner for 2nd to n-1 rounds")
-        print('Getting winner for 2nd to n-1 rounds = ' ,  count)
-        count += count + 1
         round = len(allWinners)
         finish = False
         lastWinner = ''
@@ -926,48 +927,12 @@ def bidMoney(request):
     usersInGroup = group_table.objects.filter(g_id=id)
     # user_info = UserInfo.objects.get(u_id=user)
     currentGroup = group_info_table.objects.get(id=id)
-    # dateAfterOneDays = convertMilisToDatetime(currentGroup.start_date) + relativedelta(days=+1)
 
-
-    # pub_date = datetime.datetime.today()
-    # today = pub_date.replace(hour=18, minute=29)
-    # dateAfterOneDays = today
-    #                    # + relativedelta(days=+2)
-    # print("dateAfterOneDays = ", dateAfterOneDays)
-    # # print("dateAfterOneMonth = "  , dateAfterOneMonth)
-    # milliseconds_since_one_day = dateAfterOneDays.timestamp() * 1000
-    # print("milliseconds_since_one_day = "  , milliseconds_since_one_day)
-
-
-    # milis = date_to_unix_time_millis(dateAfterOneDays.date())
-    # milliseconds_since_one_day = dateAfterOneDays.timestamp() * 1000
-    # print("date = " , dateAfterOneDays.date())
-    # print("milis = " , milliseconds_since_one_day)
-    # currentGroup.bid_date = milliseconds_since_one_day
-    # currentGroup.save()
     highestBidUser = bid.objects.filter(g_id=id, bidAmount__gt=0).order_by('bidAmount').last()
     print("highestBidUser in bid = " , highestBidUser)
 
     showBidInputBox = True
     totalAmount = int(len(usersInGroup)) * int(currentGroup.amount)
-    print("getCurrentDateInLocalTimezone().date()" , getCurrentDateInLocalTimezone().date())
-    # print("dateAfterOneDays.date()" , dateAfterOneDays.date())
-    # if (getCurrentDateInLocalTimezone().date() >= dateAfterOneDays.date()):
-    # # if(getCurrentDateInLocalTimezone().date() == getCurrentDateInLocalTimezone().date()):
-    #     showBidInputBox = False
-    #     if highestBidUser:
-    #         round = len(allWinners)
-    #         lastWinner = group_table.objects.get(g_id=id, winner=True, round=int(round))
-    #         logger.debug('lastWinner in  bid =  %s', lastWinner)
-    #
-    #         if lastWinner and highestBidUser != lastWinner:
-    #             lastWinner.winner = False
-    #             lastWinner.round = 0
-    #             lastWinner.save()
-    #         user = User.objects.get(username=highestBidUser)
-    #         highestBidWinner = group_table.objects.get(g_id=id, u_id=user)
-    #         logger.debug('highestBidWinner in  bid =  %s', highestBidWinner.u_id.username)
-
 
     if highestBidUser:
         logger.debug('highestBidUser =  %s' , highestBidUser)

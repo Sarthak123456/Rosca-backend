@@ -32,8 +32,10 @@ def my_cron_job():
 
     for group in groups:
         if group.status == 'active':
-            print("Active group: ",  convertMilisToDatetime(group.bid_date).date())
+            # print("Active group: ",  convertMilisToDatetime(group.bid_date).date())
             id = group.id
+            print("Active group: ",  id)
+            print("Bid date: ",  convertMilisToDatetime(group.bid_date).date())
             currentGroup = group_info_table.objects.get(id=id)
             # print(convertMilisToDatetime(currentGroup.bid_date).date())
             # print(getCurrentDateInLocalTimezone().date())
@@ -46,8 +48,11 @@ def my_cron_job():
 
             # -------------- Bid money logic -------------------
             if (getCurrentDateInLocalTimezone().date() == dateAfterOneDayOfBidding.date()):
-                print(convertMilisToDatetime(currentGroup.bid_date).date())
-                print(getCurrentDateInLocalTimezone().date())
+            # if(True):
+
+
+                # print(convertMilisToDatetime(currentGroup.bid_date).date())
+                # print(getCurrentDateInLocalTimezone().date())
 
                 # # dateAfterOneDays = convertMilisToDatetime(currentGroup.start_date) + relativedelta(days=+3)
                 highestBidUser = bid.objects.filter(g_id=id, bidAmount__gt=0).order_by('bidAmount').last()
@@ -55,6 +60,11 @@ def my_cron_job():
                     round = len(allWinners)
                     lastWinner = group_table.objects.get(g_id=id, winner=True, round=int(round))
                     print('lastWinner in  bid =  ', lastWinner)
+                    print('lastWinner in  bid =  ', currentGroup.bid_date)
+                    print('lastWinner in  bid =  ', currentGroup.end_date)
+                    print('lastWinner in  bid =  ', group.end_date)
+                    print('lastWinner in  bid =  ', group.bid_date)
+                    # print('lastWinner in  bid =  ', lastWinner)
 
                     if lastWinner and highestBidUser != lastWinner:
                         lastWinner.winner = False
@@ -71,6 +81,13 @@ def my_cron_job():
                         highestBidWinner.save()
                         highestBidWinner.round = len(allWinners)
                         highestBidWinner.save()
+                        bid.objects.all().delete()
+                pub_date = convertMilisToDatetime(group.end_date)
+                today = pub_date.replace(hour=23, minute=59)
+                dateAfterOneDays = today + relativedelta(days=+2)
+                milliseconds_since_one_day = dateAfterOneDays.timestamp() * 1000
+                group.bid_date = milliseconds_since_one_day
+                group.save()
 
                 # When bidding ends for a round, set bid date to a day after group end_date
                 # dateAfterOneDays = convertMilisToDatetime(currentGroup.end_date) + relativedelta(days=+1)
@@ -82,24 +99,33 @@ def my_cron_job():
 
                     # ----------------- sendNotficationToStartComity ---------------------------
 
+            print('today = ' , getCurrentDateInLocalTimezone().date())
+            print('end date = ' ,convertMilisToDatetime(1640295381352).date())
+            print('compare date = ' ,getCurrentDateInLocalTimezone().date() == convertMilisToDatetime(group.end_date).date())
+
             if (getCurrentDateInLocalTimezone().date() == convertMilisToDatetime(group.end_date).date()):
+            # if(True):
+
+                print(getCurrentDateInLocalTimezone().date())
+                print(convertMilisToDatetime(group.end_date).date())
             # if (getCurrentDateInLocalTimezone().date() == convertMilisToDatetime(currentGroup.bid_date)):
                 print("allWinners = ", allWinners)
                 # bid.objects.filter(g_id=id).delete()
-                winner = bid.objects.select_related().filter(g_id=id, bidAmount__gt=0).order_by('bidAmount').last()
+                # winner = bid.objects.select_related().filter(g_id=id, bidAmount__gt=0).order_by('bidAmount').last()
 
                 # import pdb;
+                winner = None;
                 # pdb.set_trace()
                 winner = startGroup(request, winner, id, False)
 
-                data = {
-                    "name": winner.u_id.username,
-                    "winner": winner.winner,
-                    "start_comity": winner.start_comity,
-                    "round": winner.round,
-                    "bid_amount": winner.bidAmount
-                }
-                print("end date winner", data)
+                # data = {
+                #     "name": winner.u_id.username,
+                #     "winner": winner.winner,
+                #     "start_comity": winner.start_comity,
+                #     "round": winner.round,
+                #     "bid_amount": winner.bidAmount
+                # }
+                # print("end date winner", data)
 
                 print("Logic when group ends ", winner)
                 setGroupEndDate(group)
@@ -107,8 +133,7 @@ def my_cron_job():
             if (len(allWinners) == len(group_table.objects.filter(g_id=id))):
 
                 if (getCurrentDateInLocalTimezone().date() >= convertMilisToDatetime(group.end_date).date()):
-                    # if(getCurrentDateInLocalTimezone().date() >= getCurrentDateInLocalTimezone().date()):
-
+                # if(True):
                     group.status = 'completed'
                     group.save()
                     print("Group Finished " , id)
@@ -117,23 +142,23 @@ def my_cron_job():
 
 def startGroup(request, winner, id, finish):
     # If someone bid or bid more than the last, then random winner will not matter and the higest bid user will be the winner
-    highestBidUser = bid.objects.filter(g_id=id, bidAmount__gt=0).order_by('bidAmount').last()
-    # logger.debug("highestBidUser = %s" , highestBidUser)
-    # logger.debug("winner = %s" , winner)
+    # highestBidUser = bid.objects.filter(g_id=id, bidAmount__gt=0).order_by('bidAmount').last()
+    # # logger.debug("highestBidUser = %s" , highestBidUser)
+    # # logger.debug("winner = %s" , winner)
 
-    if highestBidUser and not finish:
-        print("highestBidUser in startGroup = %s", highestBidUser)
-        winner = highestBidUser
-        print("highestBidUser = {}".format(highestBidUser))
-        return highestBidUser
+    # if highestBidUser and not finish:
+    #     print("highestBidUser in startGroup = %s", highestBidUser)
+    #     winner = highestBidUser
+    #     print("highestBidUser = {}".format(highestBidUser))
+    #     return highestBidUser
 
-    elif (winner):
-        print("winner = %s" , winner)
-        return winner
+    # elif (winner):
+    #     print("winner = %s" , winner)
+    #     return winner
 
 
-    # No winner exists, select one winner randomly
-    else:
+    # # No winner exists, select one winner randomly
+    # else:
         randomlySelectedWinner = getRandom(id, request)
         if randomlySelectedWinner:
             user = User.objects.get(username=randomlySelectedWinner)
